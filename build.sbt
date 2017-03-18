@@ -12,8 +12,8 @@ lazy val unparsing = (project in file("."))
   .settings(moduleName := "unparsing")
   .settings(unparsingSettings: _*)
   .settings(noPublishSettings)
-  .aggregate(core, spire)
-  .dependsOn(core, spire)
+  .aggregate(core, spire, tests)
+  .dependsOn(core, spire, tests)
 
 lazy val core = (project in file("core"))
   .settings(moduleName := "unparsing-core")
@@ -57,9 +57,6 @@ lazy val commonSettings = Seq(
     "bintray/denisrosset/maven" at "https://dl.bintray.com/denisrosset/maven",
     Resolver.sonatypeRepo("snapshots"),
     Resolver.sonatypeRepo("releases")
-  ),
-  libraryDependencies ++= Seq(
-    "org.spire-math" %% "spire" % spireVersion // for Opt
   )
 ) ++ warnUnusedImport
 

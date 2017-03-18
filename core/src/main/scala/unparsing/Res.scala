@@ -1,7 +1,6 @@
 package unparsing
 
 import unparsing.PrettyStringBuilder.Pos
-import spire.util.Opt
 
 // Implements unparsing of expressions according to
 // N. Ramsey, “Unparsing expressions with prefix and postfix operators,”
@@ -133,11 +132,11 @@ object Op {
 
   /** Infix operator, corresponds to fixity = INFIX of ...
     *
-    * For associativity = Opt(Left), it is INFIX of LEFT
-    *                   = Opt(Right), it is INFIX of RIGHT
-    *                   = Opt.empty[Side], it is INFIX of NONASSOC
+    * For associativity = Some(Left), it is INFIX of LEFT
+    *                   = Some(Right), it is INFIX of RIGHT
+    *                   = None, it is INFIX of NONASSOC
     */
-  case class Infix(symbol: String, priority: Int, associativity: Opt[Side]) extends Op { outerOp =>
+  case class Infix(symbol: String, priority: Int, associativity: Option[Side]) extends Op { outerOp =>
 
     def apply[L:PrettyPrint, R:PrettyPrint](l: L, r: R)(implicit sb: PrettyStringBuilder): Res = {
       val leftStart = sb.currentPos
@@ -163,15 +162,15 @@ object Op {
       case innerOp: Op if innerOp.priority < outerOp.priority => false // inner operator has stronger coupling
       case _: Op.Postfix if side == Side.Left => false // (... postfix) ...
       case _: Op.Prefix if side == Side.Right => false // // ... (prefix ...)
-      case innerOp@Op.Infix(_, _, Opt(Side.Left)) if side == Side.Left =>
+      case innerOp@Op.Infix(_, _, Some(Side.Left)) if side == Side.Left =>
         // (... infixI ...) infixO ...
         // if infixI and infixO are both left associative, with same priority => no parentheses needed.
         // otherwise, parentheses required
-        (outerOp.priority != innerOp.priority) || (outerOp.associativity != Opt(Side.Left))
-      case innerOp@Op.Infix(_, _, Opt(Side.Right)) if side == Side.Right =>
+        (outerOp.priority != innerOp.priority) || (outerOp.associativity != Some(Side.Left))
+      case innerOp@Op.Infix(_, _, Some(Side.Right)) if side == Side.Right =>
         // ... infixO (... infixI ...)
         // if infixI and infixO are both right associative, with the same priority => no parentheses needed
-        (outerOp.priority != innerOp.priority) || (outerOp.associativity != Opt(Side.Right))
+        (outerOp.priority != innerOp.priority) || (outerOp.associativity != Some(Side.Right))
       case _ => true
     }
 
@@ -196,9 +195,9 @@ object Op {
   }
 
   object Infix {
-    def leftAssoc(symbol: String, priority: Int): Infix = Infix(symbol, priority, Opt(Left))
-    def rightAssoc(symbol: String, priority: Int): Infix = Infix(symbol, priority, Opt(Right))
-    def nonAssoc(symbol: String, priority: Int): Infix = Infix(symbol, priority, Opt.empty[Side])
+    def leftAssoc(symbol: String, priority: Int): Infix = Infix(symbol, priority, Some(Left))
+    def rightAssoc(symbol: String, priority: Int): Infix = Infix(symbol, priority, Some(Right))
+    def nonAssoc(symbol: String, priority: Int): Infix = Infix(symbol, priority, None)
   }
 
 }
