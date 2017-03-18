@@ -1,7 +1,6 @@
 package unparsing
 
 import org.scalacheck.Shrink
-import org.scalatest.exceptions.DiscardedEvaluationException
 import org.scalatest.prop.PropertyChecks
 import org.scalatest.{FunSuite, Matchers}
 import org.typelevel.discipline.scalatest.Discipline
