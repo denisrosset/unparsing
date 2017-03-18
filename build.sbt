@@ -10,33 +10,58 @@ val spireVersion = "0.13.1-SNAPSHOT"
 
 lazy val unparsing = (project in file("."))
   .settings(moduleName := "unparsing")
-  .settings(unparsingSettings: _*)
+  .settings(unparsingSettings)
   .settings(noPublishSettings)
   .aggregate(core, spire, tests)
   .dependsOn(core, spire, tests)
 
+lazy val docs = (project in file("docs"))
+  .enablePlugins(MicrositesPlugin)
+  .settings(moduleName := "unparsing-docs")
+  .settings(unparsingSettings)
+  .settings(docsSettings)
+  .dependsOn(core, spire)
+
 lazy val core = (project in file("core"))
   .settings(moduleName := "unparsing-core")
-  .settings(unparsingSettings: _*)
-  .settings(commonJvmSettings: _*)
+  .settings(unparsingSettings)
+  .settings(commonJvmSettings)
 
 lazy val spire = (project in file("spire"))
   .settings(moduleName := "unparsing-spire")
-  .settings(unparsingSettings: _*)
-  .settings(testSettings: _*)
-  .settings(spireSettings: _*)
-  .settings(commonJvmSettings: _*)
+  .settings(unparsingSettings)
+  .settings(testSettings)
+  .settings(spireSettings)
+  .settings(commonJvmSettings)
   .dependsOn(core)
 
 lazy val tests = (project in file("tests"))
   .settings(moduleName := "unparsing-tests")
-  .settings(unparsingSettings: _*)
-  .settings(testSettings:_*)
-  .settings(noPublishSettings:_*)
-  .settings(commonJvmSettings: _*)
+  .settings(unparsingSettings)
+  .settings(testSettings)
+  .settings(noPublishSettings)
+  .settings(commonJvmSettings)
   .dependsOn(core, spire)
 
 lazy val unparsingSettings = buildSettings ++ commonSettings ++ publishSettings
+
+lazy val docsSettings = Seq(
+  micrositeName := "Unparsing",
+  micrositeDescription := "A library for expression unparsing/pretty-printing",
+  micrositeAuthor := "Denis Rosset",
+  micrositeGithubOwner := "denisrosset",
+  micrositeGithubRepo := "unparsing",
+  micrositePalette := Map(
+        "brand-primary"     -> "#E05236",
+        "brand-secondary"   -> "#3F3242",
+        "brand-tertiary"    -> "#2D232F",
+        "gray-dark"         -> "#453E46",
+        "gray"              -> "#837F84",
+        "gray-light"        -> "#E3E2E3",
+        "gray-lighter"      -> "#F4F3F4",
+        "white-color"       -> "#FFFFFF"),
+  fork in tut := true
+)
 
 lazy val buildSettings = Seq(
   organization := "net.alasc",

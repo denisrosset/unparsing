@@ -1,0 +1,6 @@
+options:
+
+ - title: Usage with Spire built-in types
+   url: spire.html
+   menu_type: spire
+   menu_section: spire
